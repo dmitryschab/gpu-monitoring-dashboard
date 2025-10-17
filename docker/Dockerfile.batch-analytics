@@ -1,0 +1,20 @@
+FROM apache/spark:3.5.0-python3
+
+USER root
+
+WORKDIR /opt/spark-jobs
+
+# Install Python dependencies
+RUN pip install --no-cache-dir pyspark==3.5.0
+
+# Copy Spark job files
+COPY spark-jobs/*.py .
+
+USER spark
+
+# Default command runs the batch analytics
+CMD ["spark-submit", \
+     "--master", "spark://spark-master:7077", \
+     "--deploy-mode", "client", \
+     "--conf", "spark.hadoop.fs.defaultFS=hdfs://namenode:9000", \
+     "batch_analytics.py"]

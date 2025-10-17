@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-provisioning
+  namespace: gpu-monitoring
+data:
+  influxdb.yml: |
+    apiVersion: 1
+
+    datasources:
+      - name: InfluxDB
+        type: influxdb
+        access: proxy
+        url: http://influxdb:8086
+        jsonData:
+          version: Flux
+          organization: gpu-monitoring
+          defaultBucket: gpu-metrics
+          tlsSkipVerify: true
+        secureJsonData:
+          token: my-super-secret-auth-token
+        editable: true
+
+  dashboard.yml: |
+    apiVersion: 1
+
+    providers:
+      - name: 'GPU Monitoring'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10
+        allowUiUpdates: true
+        options:
+          path: /etc/grafana/provisioning/dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: analytics-config
+  namespace: gpu-monitoring
+data:
+  # Analytics job configuration
+  HDFS_INPUT_PATH: "/gpu-metrics"
+  HDFS_OUTPUT_PATH: "/gpu-analytics"
+  SPARK_MASTER: "spark://spark-master:7077"
+  NAMENODE_URL: "hdfs://namenode:9000"
+
+  # Thresholds for analytics
+  TEMP_SPIKE_THRESHOLD: "5.0"
+  HIGH_TEMP_THRESHOLD: "80.0"
+  HIGH_LOAD_THRESHOLD: "90.0"

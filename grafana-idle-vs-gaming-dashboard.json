@@ -1,0 +1,45 @@
+{
+  "title": "GPU Performance: Idle vs Gaming",
+  "panels": [
+    {
+      "title": "Temperature Distribution - Idle vs Gaming",
+      "type": "histogram",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r._measurement == \"gpu_sessions\")\n  |> filter(fn: (r) => r._field == \"gpu_temperature\")\n  |> filter(fn: (r) => r.scenario == \"idle\" or r.scenario == \"gaming\")"
+        }
+      ]
+    },
+    {
+      "title": "Power Draw Distribution",
+      "type": "histogram",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r._measurement == \"gpu_sessions\")\n  |> filter(fn: (r) => r._field == \"board_power_draw\")\n  |> filter(fn: (r) => r.scenario == \"idle\" or r.scenario == \"gaming\")"
+        }
+      ]
+    },
+    {
+      "title": "GPU Load: Idle vs Gaming (Box Plot)",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 6, "x": 0, "y": 8},
+      "targets": [
+        {
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r._measurement == \"gpu_sessions\")\n  |> filter(fn: (r) => r._field == \"gpu_load\")\n  |> filter(fn: (r) => r.scenario == \"idle\")\n  |> mean()"
+        }
+      ]
+    },
+    {
+      "title": "Daily Averages - Temperature Trend",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 18, "x": 0, "y": 16},
+      "targets": [
+        {
+          "query": "from(bucket: \"gpu-metrics-daily\")\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"gpu_metrics_daily\")\n  |> filter(fn: (r) => r._field == \"gpu_temperature\")"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,930 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Frequency",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "count"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_temperature\")\n  |> histogram(bins: [30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0, 85.0, 90.0])\n  |> rename(columns: {le: \"temperature_range\"})",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Temperature Distribution (Last 12h)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Frequency",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "count"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> histogram(bins: [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0])\n  |> rename(columns: {le: \"load_range\"})",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Load Distribution (Last 12h)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Metric"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 9
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "import \"strings\"\n\ngpu_temp = from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_temperature\")\n  |> keep(columns: [\"_value\", \"_time\"])\n\nmin_val = gpu_temp |> min() |> findRecord(fn: (key) => true, idx: 0)\nmax_val = gpu_temp |> max() |> findRecord(fn: (key) => true, idx: 0)\nmean_val = gpu_temp |> mean() |> findRecord(fn: (key) => true, idx: 0)\np50 = gpu_temp |> quantile(q: 0.5) |> findRecord(fn: (key) => true, idx: 0)\np95 = gpu_temp |> quantile(q: 0.95) |> findRecord(fn: (key) => true, idx: 0)\np99 = gpu_temp |> quantile(q: 0.99) |> findRecord(fn: (key) => true, idx: 0)\n\narray.from(rows: [\n  {_time: now(), metric: \"Min\", value: min_val._value},\n  {_time: now(), metric: \"P50 (Median)\", value: p50._value},\n  {_time: now(), metric: \"Mean\", value: mean_val._value},\n  {_time: now(), metric: \"P95\", value: p95._value},\n  {_time: now(), metric: \"P99\", value: p99._value},\n  {_time: now(), metric: \"Max\", value: max_val._value}\n])",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Temperature Percentiles",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "_time": true
+            },
+            "indexByName": {
+              "metric": 0,
+              "value": 1
+            },
+            "renameByName": {
+              "metric": "Metric",
+              "value": "Temperature (°C)"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Metric"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 9
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "power_data = from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"board_power_draw\")\n  |> keep(columns: [\"_value\", \"_time\"])\n\nmin_val = power_data |> min() |> findRecord(fn: (key) => true, idx: 0)\nmax_val = power_data |> max() |> findRecord(fn: (key) => true, idx: 0)\nmean_val = power_data |> mean() |> findRecord(fn: (key) => true, idx: 0)\np50 = power_data |> quantile(q: 0.5) |> findRecord(fn: (key) => true, idx: 0)\np95 = power_data |> quantile(q: 0.95) |> findRecord(fn: (key) => true, idx: 0)\n\narray.from(rows: [\n  {_time: now(), metric: \"Min\", value: min_val._value},\n  {_time: now(), metric: \"P50 (Median)\", value: p50._value},\n  {_time: now(), metric: \"Mean\", value: mean_val._value},\n  {_time: now(), metric: \"P95\", value: p95._value},\n  {_time: now(), metric: \"Max\", value: max_val._value}\n])",
+          "refId": "A"
+        }
+      ],
+      "title": "Power Draw Percentiles",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "_time": true
+            },
+            "indexByName": {
+              "metric": 0,
+              "value": 1
+            },
+            "renameByName": {
+              "metric": "Metric",
+              "value": "Power (W)"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Metric"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 9
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "load_data = from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> keep(columns: [\"_value\", \"_time\"])\n\nmin_val = load_data |> min() |> findRecord(fn: (key) => true, idx: 0)\nmax_val = load_data |> max() |> findRecord(fn: (key) => true, idx: 0)\nmean_val = load_data |> mean() |> findRecord(fn: (key) => true, idx: 0)\np50 = load_data |> quantile(q: 0.5) |> findRecord(fn: (key) => true, idx: 0)\np95 = load_data |> quantile(q: 0.95) |> findRecord(fn: (key) => true, idx: 0)\n\narray.from(rows: [\n  {_time: now(), metric: \"Min\", value: min_val._value},\n  {_time: now(), metric: \"P50 (Median)\", value: p50._value},\n  {_time: now(), metric: \"Mean\", value: mean_val._value},\n  {_time: now(), metric: \"P95\", value: p95._value},\n  {_time: now(), metric: \"Max\", value: max_val._value}\n])",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Load Percentiles",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "_time": true
+            },
+            "indexByName": {
+              "metric": 0,
+              "value": 1
+            },
+            "renameByName": {
+              "metric": "Metric",
+              "value": "Load (%)"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "max", "min"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_temperature\" or r[\"_field\"] == \"cpu_temperature\")\n  |> aggregateWindow(every: 10m, fn: mean, createEmpty: false)",
+          "refId": "A"
+        }
+      ],
+      "title": "Temperature Trends (10min averages)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "max", "min"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"board_power_draw\")\n  |> aggregateWindow(every: 10m, fn: mean, createEmpty: false)",
+          "refId": "A"
+        }
+      ],
+      "title": "Power Draw Trends (10min averages)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 70
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 25
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["mean"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "idle = from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> filter(fn: (r) => r._value < 10.0)\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\ntotal = from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\narray.from(rows: [\n  {_time: now(), _value: float(v: idle._value) / float(v: total._value) * 100.0}\n])",
+          "refId": "A"
+        }
+      ],
+      "title": "Time in Idle (<10% load)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 25
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["mean"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "gaming = from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> filter(fn: (r) => r._value >= 70.0)\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\ntotal = from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\narray.from(rows: [\n  {_time: now(), _value: float(v: gaming._value) / float(v: total._value) * 100.0}\n])",
+          "refId": "A"
+        }
+      ],
+      "title": "Time Under Load (>70%)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 20
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 25
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["mean"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_temperature\")\n  |> mean()",
+          "refId": "A"
+        }
+      ],
+      "title": "Average GPU Temp (12h)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 150
+              },
+              {
+                "color": "red",
+                "value": 250
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 25
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["mean"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: -12h)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"board_power_draw\")\n  |> mean()",
+          "refId": "A"
+        }
+      ],
+      "title": "Average Power Draw (12h)",
+      "type": "stat"
+    }
+  ],
+  "refresh": "12h",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["gpu", "monitoring", "analytics", "long-term"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-12h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "GPU Long-Term Analytics",
+  "uid": "gpu-long-term-analytics",
+  "version": 0,
+  "weekStart": ""
+}

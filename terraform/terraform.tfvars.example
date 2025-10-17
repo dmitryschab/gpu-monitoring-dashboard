@@ -1,0 +1,17 @@
+# Terraform Variables Configuration
+# Copy this file to terraform.tfvars and update with your values
+
+# AWS Configuration
+aws_region  = "us-east-1"  # Change if needed
+environment = "dev"
+
+# Project Configuration
+project_name = "gpu-monitoring"
+
+# Kafka Configuration (Optional - for Lambda to send data to your local Kafka)
+# Leave empty to skip Kafka integration and just store in S3
+kafka_endpoint = ""  # e.g., "your-public-ip:9092" or leave empty
+kafka_topic    = "gpu-metrics"
+
+# Upload Configuration
+upload_batch_interval = 5  # Upload every 5 minutes to stay within free tier

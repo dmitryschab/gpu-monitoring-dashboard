@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Data files
+data/*.txt
+data/*.csv
+data/*.log
+
+# Docker volumes
+hadoop_namenode/
+hadoop_datanode/
+influxdb_data/
+grafana_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Spark
+metastore_db/
+derby.log
+spark-warehouse/
+checkpoint/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables (IMPORTANT - Contains secrets!)
+.env
+.env.local
+.env.*.local
+
+# Terraform state files (May contain secrets)
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfvars
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate.backup
+
+# AWS credentials
+.aws/
+credentials
+config
+
+# Processed data and state
+processed_logs/
+pipeline_state.json
+temp_input.txt
+fresh_data.txt
+GPU-Z Sensor Log.txt
+*.gz
+
+# Keep Lambda zip files
+!terraform/lambda/*.zip

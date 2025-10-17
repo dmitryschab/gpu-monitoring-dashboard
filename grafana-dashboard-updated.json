@@ -1,0 +1,303 @@
+{
+  "dashboard": {
+    "title": "GPU Monitoring Dashboard - Live Data",
+    "tags": ["gpu", "monitoring"],
+    "timezone": "browser",
+    "schemaVersion": 36,
+    "version": 1,
+    "refresh": "30s",
+    "time": {
+      "from": "2025-10-12T00:00:00.000Z",
+      "to": "2025-10-17T00:00:00.000Z"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "GPU Temperature Over Time",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_temperature\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "celsius",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "GPU Load Over Time",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Power Draw",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"board_power_draw\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "watt",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Memory Used",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"memory_used\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "decmbytes",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Average GPU Temperature",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 16},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_temperature\")\n  |> mean()",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "celsius",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": null, "color": "green"},
+                {"value": 60, "color": "yellow"},
+                {"value": 80, "color": "red"}
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 6,
+        "title": "Average GPU Load",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 16},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> mean()",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": null, "color": "green"},
+                {"value": 50, "color": "yellow"},
+                {"value": 80, "color": "red"}
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 7,
+        "title": "Average Power Draw",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 16},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"board_power_draw\")\n  |> mean()",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "watt",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": null, "color": "green"},
+                {"value": 200, "color": "yellow"},
+                {"value": 300, "color": "red"}
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 8,
+        "title": "Temperature Distribution (Histogram)",
+        "type": "histogram",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_temperature\")\n  |> keep(columns: [\"_value\", \"_time\"])",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "options": {
+          "bucketSize": 2
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "celsius"
+          }
+        }
+      },
+      {
+        "id": 9,
+        "title": "GPU Load Distribution (Histogram)",
+        "type": "histogram",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_load\")\n  |> keep(columns: [\"_value\", \"_time\"])",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "options": {
+          "bucketSize": 5
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "id": 10,
+        "title": "Clock Speeds",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 28},
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"gpu-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gpu_metrics\")\n  |> filter(fn: (r) => r[\"_field\"] == \"gpu_clock\" or r[\"_field\"] == \"memory_clock\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "${DS_INFLUXDB}"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "hertz",
+            "custom": {
+              "axisLabel": "Clock Speed (MHz)"
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {"id": "byName", "options": "gpu_clock"},
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "GPU Clock"
+                }
+              ]
+            },
+            {
+              "matcher": {"id": "byName", "options": "memory_clock"},
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Memory Clock"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "overwrite": true
+}

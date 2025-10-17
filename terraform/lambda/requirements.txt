@@ -1,0 +1,5 @@
+# Lambda Function Dependencies
+# Keep minimal to reduce package size (stay within free tier)
+
+boto3>=1.28.0
+kafka-python>=2.0.2  # Optional: For Kafka integration

@@ -1,0 +1,171 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: gpu-batch-analytics
+  namespace: gpu-monitoring
+  labels:
+    app: batch-analytics
+spec:
+  # Run daily at 2 AM
+  schedule: "0 2 * * *"
+
+  # Keep history of last 3 successful and 3 failed jobs
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+
+  # Concurrency policy: Don't allow concurrent runs
+  concurrencyPolicy: Forbid
+
+  jobTemplate:
+    metadata:
+      labels:
+        app: batch-analytics-job
+    spec:
+      # Retry up to 2 times on failure
+      backoffLimit: 2
+
+      # Job must complete within 2 hours
+      activeDeadlineSeconds: 7200
+
+      template:
+        metadata:
+          labels:
+            app: batch-analytics-pod
+        spec:
+          restartPolicy: OnFailure
+
+          # Wait for dependencies to be ready
+          initContainers:
+            - name: wait-for-namenode
+              image: busybox:1.28
+              command: ['sh', '-c', 'until nc -z namenode 9000; do echo waiting for namenode; sleep 5; done;']
+
+            - name: wait-for-spark-master
+              image: busybox:1.28
+              command: ['sh', '-c', 'until nc -z spark-master 7077; do echo waiting for spark-master; sleep 5; done;']
+
+          containers:
+            - name: batch-analytics
+              image: gpu-monitoring/batch-analytics:latest
+              imagePullPolicy: IfNotPresent
+
+              command:
+                - spark-submit
+                - --master
+                - spark://spark-master:7077
+                - --deploy-mode
+                - client
+                - --conf
+                - spark.hadoop.fs.defaultFS=hdfs://namenode:9000
+                - --conf
+                - spark.executor.memory=2g
+                - --conf
+                - spark.driver.memory=1g
+                - --conf
+                - spark.executor.cores=2
+                - /opt/spark-jobs/batch_analytics.py
+                - --input
+                - /gpu-metrics
+                - --output
+                - /gpu-analytics
+
+              env:
+                - name: SPARK_HOME
+                  value: /opt/spark
+                - name: PYTHONUNBUFFERED
+                  value: "1"
+
+              resources:
+                requests:
+                  memory: "2Gi"
+                  cpu: "1"
+                limits:
+                  memory: "4Gi"
+                  cpu: "2"
+
+              volumeMounts:
+                - name: spark-jobs
+                  mountPath: /opt/spark-jobs
+
+          volumes:
+            - name: spark-jobs
+              persistentVolumeClaim:
+                claimName: spark-jobs-pvc
+---
+# Manual Job to run analytics on-demand
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gpu-batch-analytics-manual
+  namespace: gpu-monitoring
+  labels:
+    app: batch-analytics
+    type: manual
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 7200
+
+  template:
+    metadata:
+      labels:
+        app: batch-analytics-pod
+        type: manual
+    spec:
+      restartPolicy: OnFailure
+
+      initContainers:
+        - name: wait-for-namenode
+          image: busybox:1.28
+          command: ['sh', '-c', 'until nc -z namenode 9000; do echo waiting for namenode; sleep 5; done;']
+
+        - name: wait-for-spark-master
+          image: busybox:1.28
+          command: ['sh', '-c', 'until nc -z spark-master 7077; do echo waiting for spark-master; sleep 5; done;']
+
+      containers:
+        - name: batch-analytics
+          image: gpu-monitoring/batch-analytics:latest
+          imagePullPolicy: IfNotPresent
+
+          command:
+            - spark-submit
+            - --master
+            - spark://spark-master:7077
+            - --deploy-mode
+            - client
+            - --conf
+            - spark.hadoop.fs.defaultFS=hdfs://namenode:9000
+            - --conf
+            - spark.executor.memory=2g
+            - --conf
+            - spark.driver.memory=1g
+            - --conf
+            - spark.executor.cores=2
+            - /opt/spark-jobs/batch_analytics.py
+            - --input
+            - /gpu-metrics
+            - --output
+            - /gpu-analytics
+
+          env:
+            - name: SPARK_HOME
+              value: /opt/spark
+            - name: PYTHONUNBUFFERED
+              value: "1"
+
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
+
+          volumeMounts:
+            - name: spark-jobs
+              mountPath: /opt/spark-jobs
+
+      volumes:
+        - name: spark-jobs
+          persistentVolumeClaim:
+            claimName: spark-jobs-pvc

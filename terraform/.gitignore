@@ -1,0 +1,41 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+.terraform.lock.hcl
+override.tf
+override.tf.json
+
+# Lambda
+lambda/package/
+lambda/*.zip
+*.pyc
+__pycache__/
+
+# Upload script
+.upload_progress.json
+
+# AWS
+.aws/
+credentials
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+outputs.txt
+
+# Downloaded files
+processed/
+downloads/

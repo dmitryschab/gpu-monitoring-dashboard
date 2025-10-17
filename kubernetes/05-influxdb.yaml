@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+  namespace: gpu-monitoring
+spec:
+  ports:
+    - port: 8086
+      targetPort: 8086
+  selector:
+    app: influxdb
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: influxdb
+  namespace: gpu-monitoring
+spec:
+  serviceName: influxdb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+        - name: influxdb
+          image: influxdb:2.7
+          ports:
+            - containerPort: 8086
+          env:
+            - name: DOCKER_INFLUXDB_INIT_MODE
+              value: "setup"
+            - name: DOCKER_INFLUXDB_INIT_USERNAME
+              value: "admin"
+            - name: DOCKER_INFLUXDB_INIT_PASSWORD
+              value: "adminpassword"
+            - name: DOCKER_INFLUXDB_INIT_ORG
+              value: "gpu-monitoring"
+            - name: DOCKER_INFLUXDB_INIT_BUCKET
+              value: "gpu-metrics"
+            - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+              value: "my-super-secret-auth-token"
+          volumeMounts:
+            - name: influxdb-data
+              mountPath: /var/lib/influxdb2
+  volumeClaimTemplates:
+    - metadata:
+        name: influxdb-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi
