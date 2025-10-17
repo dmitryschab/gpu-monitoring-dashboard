@@ -7,23 +7,18 @@ A real-time GPU and CPU monitoring system using **Kafka**, **Spark Streaming**, 
 ## Architecture
 
 ### Local Stack (Docker Compose)
-```
-GPU-Z Logs → Kafka Producer → Kafka Broker → [Spark Streaming + InfluxDB Consumer]
-                                                    ↓                    ↓
-                                                  HDFS              InfluxDB
-                                                    ↓                    ↓
-                                            Batch Analytics         Grafana
-```
 
-### Cloud Stack (AWS + Terraform) 🆕
-```
-GPU-Z Logs → S3 Upload Script → S3 Bucket → Lambda → Kafka/S3
-                 (batched)         (Raw)    (Parser)  (Processed)
-                                              ↓
-                                    Your Local Stack / Cloud
-```
+![Local Stack Architecture](docs/images/local-stack-architecture.png)
 
-**👉 [Terraform Quick Start](terraform/QUICKSTART.md)** - Deploy to AWS in 5 minutes!
+The local stack processes GPU-Z logs through Kafka, stores data in HDFS and InfluxDB, and visualizes metrics in Grafana.
+
+### Cloud Stack (AWS + Terraform)
+
+![Cloud Stack Architecture](docs/images/cloud-stack-architecture.png)
+
+The cloud stack uploads logs to S3, processes them via Lambda, and integrates with your local or cloud infrastructure.
+
+**👉 [Terraform Quick Start](docs/QUICKSTART.md)** - Deploy to AWS in 5 minutes!
 
 ### Components
 
@@ -188,22 +183,37 @@ Results are saved to HDFS and displayed in the console.
 ```
 gpu-monitoring-dashboard/
 ├── docker-compose.yml          # Docker services configuration
-├── config/
-│   └── hadoop.env             # Hadoop configuration
+├── automated_pipeline.py       # Main pipeline orchestration script
+├── load_s3_to_influxdb_v2.py  # S3 to InfluxDB data loader
+├── .env.example               # Environment variables template
+├── requirements.txt           # Python dependencies
+├── docs/                      # Documentation
+│   ├── images/                # Architecture diagrams
+│   ├── QUICKSTART.md         # Quick start guide
+│   ├── GIT_SETUP.md          # Git setup instructions
+│   └── *.md                  # Other documentation
+├── scripts/                   # Helper scripts
+│   ├── *.ps1                 # PowerShell scripts
+│   ├── *.sh                  # Bash scripts
+│   └── *.bat                 # Windows batch scripts
+├── terraform/                 # AWS infrastructure
+│   ├── main.tf               # Terraform configuration
+│   ├── lambda/               # Lambda function code
+│   └── *.md                  # Terraform documentation
 ├── kafka-producer/
-│   ├── gpuz_producer.py       # Kafka producer for GPU-Z logs
-│   ├── influxdb_consumer.py   # Consumer writing to InfluxDB
-│   └── requirements.txt       # Python dependencies
+│   ├── gpuz_producer.py      # Kafka producer for GPU-Z logs
+│   ├── influxdb_consumer.py  # Consumer writing to InfluxDB
+│   └── requirements.txt      # Python dependencies
 ├── spark-jobs/
 │   ├── streaming_processor.py # Spark Streaming job
-│   ├── batch_analytics.py     # Batch analytics job
-│   └── requirements.txt       # Python dependencies
+│   ├── batch_analytics.py    # Batch analytics job
+│   └── requirements.txt      # Python dependencies
 ├── dashboard/
-│   └── provisioning/          # Grafana auto-provisioning
-│       ├── datasources/       # InfluxDB datasource config
-│       └── dashboards/        # Dashboard definitions
-├── data/                      # Your GPU-Z logs go here
-└── README.md                  # This file
+│   ├── *.json                # Grafana dashboard definitions
+│   └── provisioning/         # Grafana auto-provisioning
+├── kubernetes/               # Kubernetes manifests
+│   └── *.yaml               # K8s deployment configs
+└── docker/                   # Docker configurations
 ```
 
 ## Monitoring Metrics
