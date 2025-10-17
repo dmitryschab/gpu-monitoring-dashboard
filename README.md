@@ -7,16 +7,21 @@ A real-time GPU and CPU monitoring system using **Kafka**, **Spark Streaming**, 
 ## Architecture
 
 ### Local Stack (Docker Compose)
+```
+GPU-Z Logs → Kafka Producer → Kafka Broker → [Spark Streaming + InfluxDB Consumer]
+                                                    ↓                    ↓
+                                                  HDFS              InfluxDB
+                                                    ↓                    ↓
+                                            Batch Analytics         Grafana
+```
 
-![Local Stack Architecture](docs/images/local-stack-architecture.png)
-
-The local stack processes GPU-Z logs through Kafka, stores data in HDFS and InfluxDB, and visualizes metrics in Grafana.
-
-### Cloud Stack (AWS + Terraform)
-
-![Cloud Stack Architecture](docs/images/cloud-stack-architecture.png)
-
-The cloud stack uploads logs to S3, processes them via Lambda, and integrates with your local or cloud infrastructure.
+### Cloud Stack (AWS + Terraform) 🆕
+```
+GPU-Z Logs → S3 Upload Script → S3 Bucket → Lambda → Kafka/S3
+                 (batched)         (Raw)    (Parser)  (Processed)
+                                              ↓
+                                    Your Local Stack / Cloud
+```
 
 **👉 [Terraform Quick Start](docs/QUICKSTART.md)** - Deploy to AWS in 5 minutes!
 
